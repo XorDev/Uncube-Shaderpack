@@ -1,7 +1,5 @@
 #version 120
 
-#define Shininess 1. //Water shine intensity [.0 .5 1.]
-
 uniform sampler2D texture;
 uniform sampler2D lightmap;
 
@@ -25,16 +23,13 @@ void main()
     vec3 norm = normalize(cross(dFdx(world),dFdy(world)));
     float lambert = (id>1.)?dir.y*.5+.5:dot(norm,dir)*.5+.5;
 
-    float sun = exp((dot(reflect(normalize(world),norm),dir)-1.)*15.*(1.5-.5*flip));
-    vec4 shine = vec4(vec3(sun)*flip*flip,0)*Shininess*step(.9,id)*step(id,1.1);
-
-    float fog = (isEyeInWater>0) ? 1.-exp(-gl_FogFragCoord * gl_Fog.density):
-    clamp((gl_FogFragCoord-gl_Fog.start) * gl_Fog.scale, 0., 1.);
+    //float fog = (isEyeInWater>0) ? 1.-exp(-gl_FogFragCoord * gl_Fog.density):
+    //clamp((gl_FogFragCoord-gl_Fog.start) * gl_Fog.scale, 0., 1.);
     vec3 shad = mix(skyColor*.5+.2,vec3(1),lambert) * texture2D(lightmap,coord1).rgb;
 
     vec4 col = texture2D(texture,coord0);
-    col *= color * vec4(shad*(1.-blindness),1) + shine;
-    col.rgb = mix(col.rgb, gl_Fog.color.rgb, fog);
+    col *= color * vec4(shad*(1.-blindness),1);
+    //col.rgb = mix(col.rgb, gl_Fog.color.rgb, fog);
     col.rgb = mix(col.rgb,entityColor.rgb,entityColor.a);
     gl_FragData[0] = col;
 }

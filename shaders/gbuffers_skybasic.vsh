@@ -4,7 +4,6 @@ uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
 
 varying vec4 color;
-varying vec2 coord0;
 
 void main()
 {
@@ -12,7 +11,7 @@ void main()
     pos = (gbufferModelViewInverse * vec4(pos,1)).xyz;
 
     gl_Position = gl_ProjectionMatrix * gbufferModelView * vec4(pos,1);
+    gl_FogFragCoord = length(pos);
 
-    color = vec4(gl_Color.rgb, gl_Color.a);
-    coord0 = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
+    color = gl_Color;
 }

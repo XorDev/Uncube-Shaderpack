@@ -40,13 +40,16 @@ void main()
     vec3 pos = (gl_ModelViewMatrix * gl_Vertex).xyz;
     pos = mat3(gbufferModelViewInverse) * pos  + gbufferModelViewInverse[3].xyz;
 
+    float c = fract(pos.y+cameraPosition.y);
+    c *= min(10.-c/.1,1.);
     pos += off(pos+cameraPosition);
     vec3 h = pos+cameraPosition;
     pos.y -= off(cameraPosition-vec3(0,1,0)).y*Offset;
     float water = float(mc_Entity.x==1.);
-    pos.y += ((cos(h.x*1.+h.y*80.+h.z*1.+frameTimeCounter*4.)*.1-.1))*water*Terrain;
+    pos.y += ((cos(h.x*2.+h.y*1.+h.z*2.+frameTimeCounter*4.)*.1-.1)*c)*water*Terrain;
 
     gl_Position = gl_ProjectionMatrix * gbufferModelView * vec4(pos,1);
+    gl_FogFragCoord = length(pos);
 
     color = gl_Color;
     world = pos;

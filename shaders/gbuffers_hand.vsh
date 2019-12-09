@@ -1,14 +1,21 @@
 #version 120
 
 #define Terrain .4 //Terrain distortion level [.2 .4 .6 .8 1.]
+#define Hand 1. //Hand distortion level [.0 1.]
+#define Offset 1. //Camera height offset [.0 1.]
 
 attribute vec2 mc_Entity;
 
 uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
 uniform vec3 cameraPosition;
+uniform float frameTimeCounter;
 
 varying vec4 color;
+varying vec3 world;
+varying vec2 coord0;
+varying vec2 coord1;
+varying float id;
 
 vec3 hash3(vec3 p)
 {
@@ -34,12 +41,15 @@ void main()
     vec3 pos = (gl_ModelViewMatrix * gl_Vertex).xyz;
     pos = mat3(gbufferModelViewInverse) * pos  + gbufferModelViewInverse[3].xyz;
 
-    pos += off(pos+cameraPosition);
-    vec3 h = pos+cameraPosition;
-    pos.y -= off(cameraPosition-vec3(0,1,0)).y;
+    pos += off(pos+cameraPosition)*Hand;
+    pos.y -= off(cameraPosition-vec3(0,1,0)).y*Offset*Hand;
 
     gl_Position = gl_ProjectionMatrix * gbufferModelView * vec4(pos,1);
     gl_FogFragCoord = length(pos);
 
     color = gl_Color;
+    world = pos;
+    coord0 = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
+    coord1 = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
+    id = mc_Entity.x;
 }
