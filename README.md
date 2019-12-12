@@ -7,4 +7,4 @@ Try out my Minecraft "uncube" shaderpack!
 ![Village](/screenshots/village.png)
 ![Ice](/screenshots/ice.png)
 It includes options for the distortion intensity, water shininess and camera offset. Play around with it and let me know what you think or 
-send me screenshots on ![Twitter](https://twitter.com/XorDev)!
+send me screenshots on [Twitter](https://twitter.com/XorDev)!
